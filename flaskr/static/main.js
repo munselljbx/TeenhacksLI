@@ -10,7 +10,6 @@ function submitStudents() {
   room_input.push(student);
   console.log(student_input);
 }
-<<<<<<< HEAD
 function submitSubjects() {
     subjectNameElement = document.getElementById("room-id");
     subjectName = subjectNameElement.value;
@@ -28,17 +27,6 @@ function submitSubjects() {
     };
     listItem.appendChild(removeButton);
     subjectList.appendChild(listItem);
-=======
-function submitRooms() {
-  var new_id = document.getElementById("room-id").value;
-  var new_courses = document.getElementById("room-courses").value;
-  var room = {
-    id: new_id,
-    courses: new_courses
-  };
-  room_input.push(room);
-  console.log(room_input);
->>>>>>> d8014ece8a3e9e4d157032934d980cd123baad32
 }
 
 function submitCSV() {
