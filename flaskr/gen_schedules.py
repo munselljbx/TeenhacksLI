@@ -43,26 +43,28 @@ def leastDictEl(dictionary):
 
 
 #Set initial schedules (semi randomly)
-def initialize_class_units(class_units, rooms, num_periods, sectionAvail):
+def initialize_class_units(class_units, rooms, num_periods, sectionAvail, courses):
     for period in range(0, num_periods):
        # print(sectionAvail)
         for room in rooms:
             for course in room["courses"]:
-                for section in courses[course]:
-                    roomSet = False
-                  #  print(section)
-                    if sectionAvail[section] == 1:
-                        sectionAvail[section] = 0
-                        #currentClass.fill(room["id"], course, period, section)
-                        class_units.append(ClassUnit(room["id"], course, period, section))
-                        #print('add unit')
-                        roomSet = True
-                        break
+                if course != "":
+                    for section in courses[course]:
+                        roomSet = False
+                      #  print(section)
+                        if sectionAvail[section] == 1:
+                            sectionAvail[section] = 0
+                            #currentClass.fill(room["id"], course, period, section)
+                            class_units.append(ClassUnit(room["id"], course, period, section))
+                            #print('add unit')
+                            roomSet = True
+                            break
                 if roomSet:
                     break
 
-def initialize_schedules(class_units, num_periods, section_enroll):
+def initialize_schedules(class_units, num_periods, section_enroll, students, max_enroll):
     schedules = []
+    #classSet = False
     for student in students:
         schedule = []
         for period in range(0, num_periods):
@@ -82,9 +84,10 @@ def initialize_schedules(class_units, num_periods, section_enroll):
 
         schedules.append(schedule)
     #print([len(schedule) for schedule in schedules])
+    print(schedules)
     return schedules
 
-def closest_course(class_in, free_space = False):
+def closest_course(class_in, max_enroll, class_units, section_enroll, free_space = False):
     period = class_in.period
     course = class_in.course
 
@@ -114,7 +117,7 @@ def closest_course(class_in, free_space = False):
     return closest_unit
 
 #Optimize schedules by equalizing metric
-def optimize(metrics, schedules, max_itr, class_units, section_enroll, dist):
+def optimize(metrics, schedules, max_itr, class_units, section_enroll, dist, max_enroll):
     itr = 0
     while itr < max_itr:
         leastKey = leastDictEl(metrics)
@@ -126,7 +129,7 @@ def optimize(metrics, schedules, max_itr, class_units, section_enroll, dist):
         #worstPeriod = currentSchedule[worstIdx]
         period = currentSchedule[worstIdx].period
         #print(currentSchedule[worstIdx].section)
-        closest_unit = closest_course(currentSchedule[worstIdx])
+        closest_unit = closest_course(currentSchedule[worstIdx], max_enroll, class_units, section_enroll)
         #print(closest_unit.section)
 
         section_enroll[currentSchedule[worstIdx2].section] -= 1
@@ -144,12 +147,13 @@ def optimize(metrics, schedules, max_itr, class_units, section_enroll, dist):
                         #print(best_student)
 
             #Closest same course with space for best_student
-            closest_unit_best = closest_course(closest_unit, free_space = True)
+            closest_unit_best = closest_course(closest_unit, max_enroll, class_units, section_enroll, free_space = True)
             section_enroll[schedules[best_student][period].section] -= 1
             section_enroll[closest_unit_best.section] += 1
             schedules[best_student][period] = closest_unit_best
             print('hey')
-            #section_enroll[closest_unit.section] += 1
+            ##########
+            section_enroll[closest_unit.section] += 1
             currentSchedule[worstIdx2] = closest_unit
 
         schedules[leastKey] = currentSchedule
@@ -176,23 +180,23 @@ def optimize(metrics, schedules, max_itr, class_units, section_enroll, dist):
 # rooms = load()
 # dist = load()
 
-#students = [{'id':'Jeffrey', 'courses':['Bio', 'Chem']}, {'id':'Jacob', 'courses':['Bio', 'Physics']}, {'id':'Jared', 'courses':['Physics', 'Chem']}]
-#rooms = [{'id':1, 'courses':['Chem']}, {'id':2, 'courses':['Bio']}, {'id':3, 'courses':['Physics']}, {'id':4, 'courses':['Bio']}]
-# dist = heres_a_distance_table_for_you_jeff()
-# print("DIST " + str(len(dist)))
-# rooms = []
-#
-# itr = 0
-# for el in dist:
-#     room = {'id': el, 'courses':["Subj" + str(itr//6)]}
-#     itr += 1
-#     rooms.append(room)
-#
-# students = []
-# for i in range(0, 100):
-#     student = {'id': i, 'courses': ["Subj" + str(random.randint(0, 8)), "Subj" + str(random.randint(0, 8)), "Subj" + str(random.randint(0, 8)), "Subj" + str(random.randint(0, 8))]}
-#     students.append(student)
-#print(dist)
+# students = [{'id':'Jeffrey', 'courses':['Bio', 'Chem']}, {'id':'Jacob', 'courses':['Bio', 'Physics']}, {'id':'Jared', 'courses':['Physics', 'Chem']}]
+# rooms = [{'id':1, 'courses':['Chem']}, {'id':2, 'courses':['Bio']}, {'id':3, 'courses':['Physics']}, {'id':4, 'courses':['Bio']}]
+dist = heres_a_distance_table_for_you_jeff()
+print("DIST " + str(len(dist)))
+rooms = []
+
+itr = 0
+for el in dist:
+    room = {'id': el, 'courses':["Subj" + str(itr//6)]}
+    itr += 1
+    rooms.append(room)
+
+students = []
+for i in range(0, 100):
+    student = {'id': i, 'courses': ["Subj" + str(random.randint(0, 8)), "Subj" + str(random.randint(0, 8)), "Subj" + str(random.randint(0, 8)), "Subj" + str(random.randint(0, 8))]}
+    students.append(student)
+print(dist)
 
 def optimize_schedules(students, rooms, dist):
 
@@ -233,11 +237,11 @@ def optimize_schedules(students, rooms, dist):
     studentIds = [student["id"] for student in students]
 
     class_units = []
-    initialize_class_units(class_units, rooms, num_periods, sectionAvail)
-    schedules = initialize_schedules(class_units, num_periods, section_enroll)
+    initialize_class_units(class_units, rooms, num_periods, sectionAvail, courses)
+    schedules = initialize_schedules(class_units, num_periods, section_enroll, students, max_enroll)
     schedules = {k:v for k, v in zip(studentIds, schedules)}
 
-    #print(schedules)
+    print(schedules)
 
     metrics = {}
     for studentID in schedules:
@@ -245,7 +249,7 @@ def optimize_schedules(students, rooms, dist):
 
     #print(metrics)
 
-    start_mean, start_std, end_mean, end_std = optimize(metrics, schedules, max_itr, class_units, section_enroll, dist)
+    start_mean, start_std, end_mean, end_std = optimize(metrics, schedules, max_itr, class_units, section_enroll, dist, max_enroll)
     print("Complete")
     print("Starting Mean: " + str(start_mean))
     print("Ending Mean: " + str(end_mean))
@@ -260,3 +264,5 @@ def optimize_schedules(students, rooms, dist):
 # print(rooms)
 # print([class_unit.period for class_unit in class_units])
 # print(num_periods)
+
+print (optimize_schedules(students, rooms, dist))

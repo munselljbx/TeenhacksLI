@@ -30,13 +30,13 @@ function submitInfo() {
     for (var i = 0; i < grid.length; i ++) {
         for (var j = 0; j < grid.length; j ++) {
             if (grid[i][j].type == "room") {
-                roomdata.push({"id": grid[i][j].id, "subject": grid[i][j].subjects});
+                roomdata.push({"id": grid[i][j].id, "courses": grid[i][j].courses});
             }
         }
     }
     for (var i = 0; i < grid.length; i ++) {
         for (var j = 0; j < grid.length; j ++) {
-            pathfindingdata.push({"id": grid[i][j].id, "subject": grid[i][j].subjects, "x": i, "y": j, "type":grid[i][j].type});
+            pathfindingdata.push({"id": grid[i][j].id, "subject": grid[i][j].courses, "x": i, "y": j, "type":grid[i][j].type});
         }
     }
 
@@ -90,7 +90,7 @@ window.onload = function () {
                     grid[i][j].type = placingMode;
                     console.log(box.x);
                     grid[i][j].id = document.getElementById("set-id").value;
-                    grid[i][j].subjects.push(selectedSubject);
+                    grid[i][j].courses.push(selectedSubject);
                     if (placingMode == "room") {
                         ctx.fillStyle = "black";
                     }
@@ -128,7 +128,7 @@ grid = [];
 for (var x = 0; x < gridX; x ++) {
     grid.push([]);
     for (var y = 0; y < gridY; y ++) {
-        grid[x].push({id: "", subjects: [], type: "empty", x: x * rectWidth, y: y * rectHeight});
+        grid[x].push({id: "", courses: [], type: "empty", x: x * rectWidth, y: y * rectHeight});
         ctx.strokeStyle = "black";
         ctx.lineWidth = 0.1;
         ctx.rect(x * rectWidth, y * rectHeight, (x*rectWidth) + rectWidth, (y*rectHeight) + rectHeight);

@@ -238,3 +238,14 @@ def get_distances_from_rooms(room_data):
             distance_lookup_table[id][id2] = get_dist_3d(id, id2, grid)
             print(id, id2)
     return distance_lookup_table
+
+def heres_a_distance_table_for_you_jeff():
+    distance_lookup_table = {}
+    for id in roomIds:
+        distance_lookup_table[id] = {}
+        for id2 in roomIds:
+            distance_lookup_table[id][id2] = get_dist_3d(id, id2, grid)
+            print (id, id2)
+    return distance_lookup_table
+
+#print heres_a_distance_table_for_you_jeff()
