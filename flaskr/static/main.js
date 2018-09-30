@@ -8,12 +8,13 @@ function submitStudents() {
 }
 function submitRooms() {
   new_id = document.getElementById("room-id").value;
-  new_courses = document.getElementById("room-classes").value;
+  new_courses = document.getElementById("room-courses").value;
   var room = {
     id: new_id,
     courses: new_courses
   };
   room_input.push(room);
+  console.log(room_input);
 }
 function submitInfo() {
 
