@@ -50,13 +50,14 @@ body {
   background-color: #b2cefe;
   font-size:55px;
   text-align:center;
-  padding-top: 11%;
+  padding-top: 8%;
+  margin:0;
 
 }
 #importButton {
-  border-radius:10px;
   text-align: center;
-  top: 50%;
+  padding:0;
+  margin:0;
 }
 
 h3 {
@@ -87,4 +88,17 @@ input {
     border-radius: 5px;
     background-color: Transparent;
     font-size: 20px;
+}
+
+ul {
+  list-style: none;
+}
+
+#room-fields {
+
+}
+
+#canvas {
+  width: 100%;
+  height: 100%;
 }
