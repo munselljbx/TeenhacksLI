@@ -149,7 +149,7 @@ def optimize(metrics, schedules, max_itr, class_units, section_enroll, dist):
             section_enroll[closest_unit_best.section] += 1
             schedules[best_student][period] = closest_unit_best
             print('hey')
-            section_enroll[closest_unit.section] += 1
+            #section_enroll[closest_unit.section] += 1
             currentSchedule[worstIdx2] = closest_unit
 
         schedules[leastKey] = currentSchedule
@@ -170,8 +170,6 @@ def optimize(metrics, schedules, max_itr, class_units, section_enroll, dist):
         itr += 1
     return startMean, startSTD, endMean, endSTD
 
-#def optimize_schedules():
-
 #Read JSON
 #List of students
 # students = load()
@@ -180,78 +178,82 @@ def optimize(metrics, schedules, max_itr, class_units, section_enroll, dist):
 
 #students = [{'id':'Jeffrey', 'courses':['Bio', 'Chem']}, {'id':'Jacob', 'courses':['Bio', 'Physics']}, {'id':'Jared', 'courses':['Physics', 'Chem']}]
 #rooms = [{'id':1, 'courses':['Chem']}, {'id':2, 'courses':['Bio']}, {'id':3, 'courses':['Physics']}, {'id':4, 'courses':['Bio']}]
-dist = heres_a_distance_table_for_you_jeff()
-print("DIST " + str(len(dist)))
-rooms = []
-
-itr = 0
-for el in dist:
-    room = {'id': el, 'courses':["Subj" + str(itr//6)]}
-    itr += 1
-    rooms.append(room)
-
-students = []
-for i in range(0, 100):
-    student = {'id': i, 'courses': ["Subj" + str(random.randint(0, 8)), "Subj" + str(random.randint(0, 8)), "Subj" + str(random.randint(0, 8)), "Subj" + str(random.randint(0, 8))]}
-    students.append(student)
+# dist = heres_a_distance_table_for_you_jeff()
+# print("DIST " + str(len(dist)))
+# rooms = []
+#
+# itr = 0
+# for el in dist:
+#     room = {'id': el, 'courses':["Subj" + str(itr//6)]}
+#     itr += 1
+#     rooms.append(room)
+#
+# students = []
+# for i in range(0, 100):
+#     student = {'id': i, 'courses': ["Subj" + str(random.randint(0, 8)), "Subj" + str(random.randint(0, 8)), "Subj" + str(random.randint(0, 8)), "Subj" + str(random.randint(0, 8))]}
+#     students.append(student)
 #print(dist)
 
-num_periods = len(students[0]["courses"]) #Number of periods in the daya
+def optimize_schedules(students, rooms, dist):
 
-max_enroll = 33
+    num_periods = len(students[0]["courses"]) #Number of periods in the daya
 
-courseIDs = []
-course_counts = []
-for student in students:
-    for course in student["courses"]:
-        if course in courseIDs:
-            course_counts[courseIDs.index(course)] += 1
-        else:
-            courseIDs.append(course)
-            course_counts.append(1)
+    max_enroll = 33
 
-#print(courseIDs)
+    courseIDs = []
+    course_counts = []
+    for student in students:
+        for course in student["courses"]:
+            if course in courseIDs:
+                course_counts[courseIDs.index(course)] += 1
+            else:
+                courseIDs.append(course)
+                course_counts.append(1)
 
-sorted_sections = []
-unsorted_sections = []
-for idx in range(0, len(course_counts)):
-    section = []
-    for itr in range(int(ceil(course_counts[idx]/max_enroll))): #change 1 back to max_enroll
-        section.append(courseIDs[idx] + str(itr))
-        unsorted_sections.append(courseIDs[idx] + str(itr))
-    sorted_sections.append(section)
+    #print(courseIDs)
 
-courses = {k:v for k, v in zip(courseIDs, sorted_sections)} #load() list of courses and how many sections of each
+    sorted_sections = []
+    unsorted_sections = []
+    for idx in range(0, len(course_counts)):
+        section = []
+        for itr in range(int(ceil(course_counts[idx]/max_enroll))): #change 1 back to max_enroll
+            section.append(courseIDs[idx] + str(itr))
+            unsorted_sections.append(courseIDs[idx] + str(itr))
+        sorted_sections.append(section)
 
-#print(courses)
+    courses = {k:v for k, v in zip(courseIDs, sorted_sections)} #load() list of courses and how many sections of each
 
-section_enroll = {k:v for k, v in zip(unsorted_sections, [0]*len(unsorted_sections))} #section:students enrolled. Inialize to zero
-sectionAvail = {k:v for k, v in zip(unsorted_sections, [1]*len(unsorted_sections))} #availability of section
-print(section_enroll)
-max_itr = 1000 #max number of iterations of optimization
+    #print(courses)
 
-studentIds = [student["id"] for student in students]
+    section_enroll = {k:v for k, v in zip(unsorted_sections, [0]*len(unsorted_sections))} #section:students enrolled. Inialize to zero
+    sectionAvail = {k:v for k, v in zip(unsorted_sections, [1]*len(unsorted_sections))} #availability of section
+    #print(section_enroll)
+    max_itr = 500 #max number of iterations of optimization
 
-class_units = []
-initialize_class_units(class_units, rooms, num_periods, sectionAvail)
-schedules = initialize_schedules(class_units, num_periods, section_enroll)
-schedules = {k:v for k, v in zip(studentIds, schedules)}
+    studentIds = [student["id"] for student in students]
 
-#print(schedules)
+    class_units = []
+    initialize_class_units(class_units, rooms, num_periods, sectionAvail)
+    schedules = initialize_schedules(class_units, num_periods, section_enroll)
+    schedules = {k:v for k, v in zip(studentIds, schedules)}
 
-metrics = {}
-for studentID in schedules:
-    metrics[studentID] = calc_metric(schedules[studentID], dist)
+    #print(schedules)
 
-#print(metrics)
+    metrics = {}
+    for studentID in schedules:
+        metrics[studentID] = calc_metric(schedules[studentID], dist)
 
-start_mean, start_std, end_mean, end_std = optimize(metrics, schedules, max_itr, class_units, section_enroll, dist)
-print("Complete")
-print("Starting Mean: " + str(start_mean))
-print("Ending Mean: " + str(end_mean))
-print("Starting STD: " + str(start_std))
-print("Ending STD: " + str(end_std))
-print(section_enroll)
+    #print(metrics)
+
+    start_mean, start_std, end_mean, end_std = optimize(metrics, schedules, max_itr, class_units, section_enroll, dist)
+    print("Complete")
+    print("Starting Mean: " + str(start_mean))
+    print("Ending Mean: " + str(end_mean))
+    print("Starting STD: " + str(start_std))
+    print("Ending STD: " + str(end_std))
+    print(section_enroll)
+
+    return schedules
 
 # print(schedules['Jacob'][0].course)
 # print(schedules['Jacob'][1].course)
