@@ -109,3 +109,8 @@ ul {
   color: #4f4e4e;
   height: 25px;
 }
+
+#canvas {
+    width: 100%;
+    height: 100%;
+}
