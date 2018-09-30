@@ -2,7 +2,7 @@ var student_input = [];
 var subjects = [];
 
 var fr = new FileReader();
-
+var selectedSubject = "";
 fr.onload = function () {
     text = fr.result;
     lines = text.split("\n");
@@ -20,6 +20,11 @@ fr.onload = function () {
                     importedSubjects.push(lines[i].split(", ").slice(1)[j]);
                     listItem = document.createElement("li");
                     listItem.innerHTML = lines[i].split(", ").slice(1)[j];
+                    listItem.subject = lines[i].split(", ").slice(1)[j];
+                    listItem.onclick = function () {
+                        selectedSubject = this.subject;
+                        console.log(selectedSubject);
+                    }
                     removeButton = document.createElement("button");
                     removeButton.innerHTML = "-";
                     removeButton.id = "remove-button";

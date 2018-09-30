@@ -24,6 +24,9 @@ function autoAssign() {
     }
 }
 
+function submitInfo() {
+
+}
 
 /*
 function relMouseCoords(event){
@@ -55,6 +58,7 @@ window.onload = function () {
                     grid[i][j].type = placingMode;
                     console.log(box.x);
                     grid[i][j].id = document.getElementById("set-id").value;
+                    grid[i][j].subjects.push(selectedSubject);
                     if (placingMode == "room") {
                         ctx.fillStyle = "black";
                     }
