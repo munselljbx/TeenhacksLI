@@ -194,10 +194,10 @@ def get_dist_2d(start_id, end_id, grid):
 
 def disp_grid(grid):
     for level in grid:
-        print "-" * 60
+        print("-" * 60)
         for row in level:
-            print [tile.id for tile in row]
-    print "-" * 60
+            print([tile.id for tile in row])
+    print("-" * 60)
 
 disp_grid(grid)
 
@@ -214,5 +214,5 @@ def heres_a_distance_table_for_you_jeff():
         distance_lookup_table[id] = {}
         for id2 in roomIds:
             distance_lookup_table[id][id2] = get_dist_3d(id, id2, grid)
-            print (id, id2)
+            print(id, id2)
     return distance_lookup_table
