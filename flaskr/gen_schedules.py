@@ -5,7 +5,7 @@ from statistics import mean
 #Calculate metrics/ mean dist b/w consecutive classes
 def calc_metric(schedule, dist):
     dists = []
-    for idx in enum(schedule):
+    for idx in enumerate(schedule):
         if idx != 0:
             dists.append(dist[schedule[idx].room][schedule[idx-1].room])
     return mean(dists)
@@ -14,7 +14,7 @@ def calc_metric(schedule, dist):
 def worstDist(schedule, dist):
     worstDist = 0
     worstDistIdx = 0;
-    for idx in enum(schedule):
+    for idx in enumerate(schedule):
         if idx != 0:
             dist = dist[schedule[idx].room][schedule[idx-1].room]
             if dist > worstDist:
