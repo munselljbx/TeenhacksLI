@@ -36,7 +36,7 @@ function submitInfo() {
     }
     for (var i = 0; i < grid.length; i ++) {
         for (var j = 0; j < grid.length; j ++) {
-            roomdata.push({"id": grid[i][j].id, "subject": grid[i][j].subjects, "x": i, "y": j, "type":grid[i][j].type});
+            pathfindingdata.push({"id": grid[i][j].id, "subject": grid[i][j].subjects, "x": i, "y": j, "type":grid[i][j].type});
         }
     }
 

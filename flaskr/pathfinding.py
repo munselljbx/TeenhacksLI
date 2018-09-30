@@ -191,6 +191,12 @@ def get_dist_2d(start_id, end_id, grid):
                 branch_points.remove(branch_points[-1]) #idk why but this works
             continue
 
+roomIds = []
+for level in grid:
+    for row in level:
+        for tile in row:
+            if tile.type == "room":
+                roomIds.append(tile.id)
 
 def disp_grid(grid):
     for level in grid:
@@ -199,16 +205,32 @@ def disp_grid(grid):
             print([tile.id for tile in row])
     print("-" * 60)
 
-disp_grid(grid)
+def disp_grid_2d(grid):
+    print("-" * 60)
+    for row in grid:
+        print([tile.id for tile in row])
+    print("-" * 60)
 
-roomIds = []
-for level in grid:
-    for row in level:
-        for tile in row:
-            if tile.type == "room":
-                roomIds.append(tile.id)
+def get_distances_from_rooms(room_data):
+    print (room_data)
+    print ("\n" * 3)
+    grid_size = 10
+    grid = [[]]
+    for x in range(grid_size):
+        grid[0].append([])
+        for y in range(grid_size):
+            for obj in room_data:
+                if obj["x"] == x and obj["y"] == y:
+                    grid[0][x].append(Tile(x, y, 0, obj["type"], obj["id"]))
 
-def heres_a_distance_table_for_you_jeff():
+    disp_grid(grid)
+
+    roomIds = []
+    for level in grid:
+        for row in level:
+            for tile in row:
+                if tile.type == "room":
+                    roomIds.append(tile.id)
     distance_lookup_table = {}
     for id in roomIds:
         distance_lookup_table[id] = {}
