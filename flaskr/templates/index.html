@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>SkEDU</title>
+    <link rel="stylesheet" type="text/css" href="../static/main.css">
+    <link href="https://fonts.googleapis.com/css?family=Baloo" rel="stylesheet">
+<!--
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.mis.js"></script>
+    <script>
+      window.onload = function() {
+        var c = document.getElementById("canvas");
+        var ctx = c.getContext("2");
+        c.addEventListener("click",handleClick);
+      }
+      function getMousePos(c, evt) {
+        var rect = c.getBoundingClientRect();
+        return {
+          x: evt.clientX - rect.left,
+          y: evt.clientY = rect.top
+        };
+        }
+      function handleClick(e) {
+        var pos = getMousePos(canvas,e);
+        posx = pos.x;
+        posy = pos.y;
+        alert(posx + " " + posy);
+      }
+      function draw() {
+        for(var x = 0; x < 8; x++) {
+          for(var y = 0; y < 8; y++) {
+            if(x%2 == y%2) {
+              ctx.fillStyle = "black";
+              ctx.fillRect(68*x,68*y,68,68);
+            }
+            else {
+              ctx.fillStyle = "white";
+              ctx.fillRect(68*x,68*y,68,68);
+            }
+            }
+            }
+          }
+        }
+      }
+    </script>
+  -->
+    <script src="../static/main.js"></script>
+  </head>
+  <body>
+    <div class="grid">
+      <div id="map">
+        <canvas id="canvas" width="504" height"504"></canvas>
+      </div>
+      <div id="rooms">
+        <h3>Rooms</h3>
+        <form>
+          <input type="text" name="room-id" id="room-id"><br>
+          <input type="text" name="room-courses" id="room-courses"><br>
+          <input type="submit" onclick="submitRooms()" value="Submit">
+        </form>
+      </div>
+      <div id="students">
+        <h3>Students</h3>
+        <form>
+          <input type="text" name="student-id" id="students-id"><br>
+          <input type="text" name="student-courses" id="student-courses"><br>
+          <input type="button" onclick="submitStudents()" value="Submit">
+        </form>
+      </div>
+      <button id="algorithm" onclick="submitInfo()"><span id="go-button">Go</span></button>
+      <!--Fix this later-->
+      <form id="import">
+        <label for="importButton"<span id="importButtonText">Import CSV files</span></label><br>
+        <div id="actually-die">
+          <input id="importButton" type="file" name="importButton" accept="text/csv">
+        </div>
+      </form>
+      </div>
+    </div>
+  </body>
+</html>
