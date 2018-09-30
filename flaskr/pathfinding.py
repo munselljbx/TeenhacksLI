@@ -208,7 +208,7 @@ for level in grid:
             if tile.type == "room":
                 roomIds.append(tile.id)
 
-heres_a_distance_table_for_you_jeff():
+def heres_a_distance_table_for_you_jeff():
     distance_lookup_table = {}
     for id in roomIds:
         distance_lookup_table[id] = {}
