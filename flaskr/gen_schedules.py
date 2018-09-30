@@ -74,8 +74,8 @@ def initialize_schedules(class_units, num_periods, section_enroll):
                                 break
             if classSet:
                 break
-                                
-                                
+
+
         schedules.append(schedule)
     print([len(schedule) for schedule in schedules])
     return schedules
@@ -83,7 +83,7 @@ def initialize_schedules(class_units, num_periods, section_enroll):
 def closest_course(class_in, free_space = False):
     period = class_in.period
     course = class_in.course
-    
+
     closest_unit = class_in
     if free_space == False:
         closest_unit_dist = 99999
@@ -145,12 +145,12 @@ def optimize(metrics, schedules, max_itr, class_units, section_enroll, dist):
             schedules[best_student][period] = closest_unit_best
 
         schedules[leastKey] = currentSchedule
-        
+
         for studentID in schedules:
             metrics[studentID] = calc_metric(schedules[studentID], dist)
         print(metrics)
         print(mean(metrics.values()))
-    
+
         itr += 1
 
 #Read JSON
@@ -209,14 +209,14 @@ schedules = {k:v for k, v in zip(studentIds, schedules)}
 metrics = {}
 for studentID in schedules:
     metrics[studentID] = calc_metric(schedules[studentID], dist)
-    
+
 print(metrics)
 
 optimize(metrics, schedules, max_itr, class_units, section_enroll, dist)
 print("Complete")
 
-print(schedules['Jacob'][0].course)
-print(schedules['Jacob'][1].course)
-print(rooms)
-print([class_unit.period for class_unit in class_units])
-print(num_periods)
+# print(schedules['Jacob'][0].course)
+# print(schedules['Jacob'][1].course)
+# print(rooms)
+# print([class_unit.period for class_unit in class_units])
+# print(num_periods)
