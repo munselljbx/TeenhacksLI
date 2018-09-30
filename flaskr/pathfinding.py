@@ -111,9 +111,7 @@ def get_dist_3d(start_id, end_id, grid):
     else: #but if they're not, lets go to staircases
         #first we get the distances to all staircases on the level
         #print [get_dist_2d(start_id, stair.id, grid) for stair in get_staircases_on_level(z1, grid)]
-        print "pl"
         stair_dists = [(stair.id, get_dist_2d(start_id, stair.id, grid)) for stair in get_staircases_on_level(z1, grid)]
-        print "pls"
         #then we get the id of the closest staircase
         least_dist = 1000000
         least_dist_id = ""
@@ -126,9 +124,7 @@ def get_dist_3d(start_id, end_id, grid):
         total_dist += abs(z2 - z1) * DIST_PER_FLOOR
         #add distance from staircase on other floor to destination
         other_stair_id = str(z2) + least_dist_id[-1] #make id of other stair from level and staircase id
-        print other_stair_id
         total_dist += get_dist_2d(other_stair_id, end_id, grid)
-        print "pls2"
         return total_dist
 
 
@@ -145,7 +141,6 @@ def get_dist_2d(start_id, end_id, grid):
 
     while True:
         dist += 1
-        time.sleep(0.1)
         currentTile = get_tile(x, y, z, grid)
         currentTile.visited = True
         if len(branch_points) > 0: #i actually don't think this will be needed but maybe
@@ -160,12 +155,10 @@ def get_dist_2d(start_id, end_id, grid):
                 adj_hallways.append(tile)
         #decide what to do based on number of hallways
         if len(adj_hallways) == 1:
-            print "one possible way"
             #only one option, so let's go there
             x, y = adj_hallways[0].pos["x"], adj_hallways[0].pos["y"]
             continue #go to top of loop
         elif len(adj_hallways) > 1:
-            print "more than one"
             #make a new branch point record if we dont have one already
             #visited tiles are the tiles after that branch point but before the next
             #im using them so that if we go back to the branch point, we can unvisit the tiles
@@ -176,15 +169,12 @@ def get_dist_2d(start_id, end_id, grid):
             for bp in branch_points:
                 if bp["coords"] == (x, y):
                     new_pos = bp["adj_hallways"].pop(0).pos
-                    print "removed a value"
-                    print bp["adj_hallways"]
                     x, y = new_pos["x"], new_pos["y"]
                     #if there are no more adj hallways, remove the branch point
                     #and go back to previous branch point
                     #it should never revisit a branch point thats been removed
                     #but if im wrong and it does this will 100% break the algorithm
                     if len(bp["adj_hallways"]) == 0:
-                        print "iewjfw0epo"
                         branch_points.remove(bp)
                         for vt in bp["visited_tiles"]: #this should honestly never be needed
                             vt.visited = False
@@ -193,12 +183,10 @@ def get_dist_2d(start_id, end_id, grid):
                     continue
             continue
         elif len(adj_hallways) < 1:
-            print "no way"
             #nowhere left to go
             #just go back to the last recorded branch point (which should be the last one visited)
             dist = branch_points[-1]["dist_to_start"] #reset distance
             x, y = branch_points[-1]["coords"][0], branch_points[-1]["coords"][1]
-            print branch_points[-1]["adj_hallways"][0].pos
             if len(branch_points[-1]["adj_hallways"]) == 1:
                 branch_points.remove(branch_points[-1]) #idk why but this works
             continue
@@ -213,4 +201,16 @@ def disp_grid(grid):
 
 disp_grid(grid)
 
-print get_dist_3d("038", "158", grid)
+roomIds = []
+for level in grid:
+    for row in level:
+        for tile in row:
+            if tile.type == "room":
+                roomIds.append(tile.id)
+
+distance_lookup_table = {}
+for id in roomIds:
+    distance_lookup_table[id] = {}
+    for id2 in roomIds:
+        distance_lookup_table[id][id2] = get_dist_3d(id, id2, grid)
+        print (id, id2)
