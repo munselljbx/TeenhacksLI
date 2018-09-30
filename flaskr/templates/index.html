@@ -65,15 +65,17 @@
           <input type="text" name="student-courses" id="student-courses"><br>
           <button onclick="submitStudents()"> Submit </button>
       </div>
-      <button id="algorithm" onclick="submitInfo()"><span id="go-button">Go</span></button>
-      <!--Fix this later-->
+      <div>
+        <button id="algorithm" onclick="submitInfo()"><span id="go-button">Go</span></button>
+        <!--Fix this later-->
+      </div>
+      <div id="import">
         <label for="importButton"<span id="importButtonText">Import CSV files</span></label><br>
-        <div id="import">
         <div id="actually-die">
           <input id="importButton" type="file" name="importButton" accept="text/csv">
         </div>
-        </div>
         <button onclick="submitCSV()"> Submit </button>
+      </div>
       </div>
   </body>
 </html>
