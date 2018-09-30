@@ -257,6 +257,11 @@ def optimize_schedules(students, rooms, dist):
     print("Ending STD: " + str(end_std))
     print(section_enroll)
 
+    print("SCHEDULES")
+    for studentID, schedule in schedules.items():
+        for unit in schedule:
+            print("|StudentID: "+str(studentID)+" |Period: "+str(unit.period)+" |Course: "+str(unit.course)+" |Section: "+str(unit.section)+" | Room: "+str(unit.room) + " |")
+
     return schedules
 
 # print(schedules['Jacob'][0].course)
