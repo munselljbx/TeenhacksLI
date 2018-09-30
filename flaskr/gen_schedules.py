@@ -1,5 +1,5 @@
 #Generate Schedules
-from "class_unit.py" import ClassUnit
+from class_unit import ClassUnit
 from statistics import mean
 
 #Calculate metrics/ mean dist b/w consecutive classes
@@ -28,8 +28,8 @@ def leastDictEl(dictionary):
     leastKey = ""
 
     for key, value in dictionary:
-        if value < least:
-            least = value
+        if value < leastValue:
+            leastValue = value
             leastKey = key
     return leastKey
 
@@ -38,8 +38,9 @@ def leastDictEl(dictionary):
 def initialize_class_units(class_units, rooms, num_periods, sectionAvail):
     for period in range(0, num_periods):
         for room in rooms:
-            for courses in room["courses"]:
-                for section in courses:
+            for course in room["courses"]:
+                for section in courses[course]:
+                    print(section)
                     if sectionAvail[section] == 1:
                         sectionAvail[section] = 0
                         #currentClass.fill(room["id"], course, period, section)
@@ -67,8 +68,8 @@ def closest_course(class_in, free_space = False):
     if free_space == False:
         closest_unit_dist = 99999
         for class_unit in class_units:
-            if class_unit.period = period:
-                if class_unit.course = course:
+            if class_unit.period == period:
+                if class_unit.course == course:
                     classDist = dist[class_in.room][class_unit.room]
                     if classDist < closest_unit_dist:
                         closest_unit_dist = classDist
@@ -76,8 +77,8 @@ def closest_course(class_in, free_space = False):
     else:
         closest_unit_dist = 99999
         for class_unit in class_units:
-            if class_unit.period = period:
-                if class_unit.course = course:
+            if class_unit.period == period:
+                if class_unit.course == course:
                     if section_enroll[closest_unit.section] < max_enroll:
                         classDist = dist[class_in.room][class_unit.room]
                         if classDist < closest_unit_dist:
@@ -95,7 +96,6 @@ def optimize(metrics, schedules, max_itr, class_units, section_enroll, dist):
         worstIdx = worstDist(currentSchedule, dist)
         #worstPeriod = currentSchedule[worstIdx]
         period = currentSchedule[worstIdx].period
-        course = currentSchedule[worstIdx].course
 
         closest_unit = closest_course(currentSchedule[worstIdx])
 
@@ -114,9 +114,9 @@ def optimize(metrics, schedules, max_itr, class_units, section_enroll, dist):
 
             #Closest same course with space for best_student
             closest_unit_best = closest_course(closest_unit, free_space = True)
-            section_enroll[schedules[studentID][period].section] -= 1
+            section_enroll[schedules[best_student][period].section] -= 1
             section_enroll[closest_unit_best.section] += 1
-            schedules[studentID][period] = closest_unit_best
+            schedules[best_student][period] = closest_unit_best
 
         schedules[leastKey] = currentSchedule
 
@@ -127,6 +127,10 @@ def optimize(metrics, schedules, max_itr, class_units, section_enroll, dist):
 # students = load()
 # rooms = load()
 # dist = load()
+
+students = [{'id':'Jeffrey', 'courses':['Bio', 'Chem']}, {'id':'Jacob', 'courses':['Bio', 'Physics']}, {'id':'Jared', 'courses':['Physics', 'Chem']}]
+rooms = [{'id':1, 'courses':['Chem']}, {'id':2, 'courses':['Bio']}, {'id':3, 'courses':['Physics']}]
+dist = {1:{1:0, 2:1, 3:2}, 2:{2:0, 1:1, 3:3}, 3:{3:0, 2:3, 1:2}}
 
 num_periods = len(students[0]["courses"]) #Number of periods in the day
 
@@ -146,7 +150,7 @@ sorted_sections = []
 unsorted_sections = []
 for count in course_counts:
     section = []
-    for itr in xrange(count):
+    for itr in range(count):
         section.append("courseIds" + str(itr))
         unsorted_sections.append("courseIds" + str(itr))
     sorted_sections.append(section)
@@ -170,3 +174,4 @@ for studentID in schedules:
     metrics[studentID] = calc_metric(schedules[studentID], dist)
 
 optimize(metrics, schedules, max_itr, class_units, section_enroll, dist)
+print("Complete")
