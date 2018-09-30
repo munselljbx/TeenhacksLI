@@ -93,6 +93,17 @@ input {
 
 ul {
   list-style: none;
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+  padding-top: 10px;
+}
+
+li {
+  list-style: none;
+  display: block;
+  margin: 0 auto;
+  text-align:center;
 }
 
 #room-id, #student-id, #student-courses {
@@ -108,6 +119,18 @@ ul {
   background-color: #baed91;
   color: #4f4e4e;
   height: 25px;
+  font-family: 'Baloo', cursive;
+}
+
+#import-button {
+  display: block;
+  margin: 0 auto;
+  border-radius: 10px;
+  border:none;
+  background-color: #baed91;
+  color: #4f4e4e;
+  height: 25px;
+  font-family: 'Baloo', cursive;
 }
 
 #toolbar!important {
