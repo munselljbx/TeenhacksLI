@@ -25,7 +25,39 @@ function autoAssign() {
 }
 
 function submitInfo() {
+    roomdata = [];
+    pathfindingdata = [];
+    for (var i = 0; i < grid.length; i ++) {
+        for (var j = 0; j < grid.length; j ++) {
+            if (grid[i][j].type == "room") {
+                roomdata.push({"id": grid[i][j].id, "subject": grid[i][j].subjects});
+            }
+        }
+    }
+    for (var i = 0; i < grid.length; i ++) {
+        for (var j = 0; j < grid.length; j ++) {
+            roomdata.push({"id": grid[i][j].id, "subject": grid[i][j].subjects, "x": i, "y": j, "type":grid[i][j].type});
+        }
+    }
 
+    packaged_data = {"pathfindingdata": pathfindingdata, "roomdata": roomdata, "student_info": student_info}
+/*
+    $.post("/receiver", "this is some data", function(){
+	});*/
+
+    $.ajax({
+            type: "POST",
+            url: "/receiver",
+            timeout: 2000,
+            data: JSON.stringify(packaged_data),
+            success: function(data) {
+                //show content
+                alert('Success!')
+            },
+            error: function(jqXHR, textStatus, err) {
+                //show error message
+                alert('text status '+textStatus+', err '+err)
+            }});
 }
 
 /*
