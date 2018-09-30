@@ -1,15 +1,12 @@
+import math, time
+
 class Tile():
-    def __init__(self, x, y, type="empty", id=None):
+    def __init__(self, x, y, level, type="empty", id=None):
         self.type = type
         self.id = id
         self.pos = {"x": x, "y": y}
         self.visited = False
-    def isEmpty(self):
-        return self.type == "empty"
-    def isRoom(self):
-        return self.type == "room"
-    def isHallway(self):
-        return self.type == "hall"
+        self.level = level
     def setType(self, type):
         self.type = type
 """
@@ -28,70 +25,147 @@ grid = [
 """
 
 map = [
-    ["r", "r", "r", "r", "r", "r", "r", "r", "r"],
+[
+    ["r", "r", "r", "r", "r", "s2", "r", "r", "r"],
     ["h", "h", "h", "h", "h", "h", "h", "h", "h"],
     ["r", "r", "r", "r", "h", "r", "r", "r", "r"],
     ["e", "e", "e", "r", "h", "r", "e", "e", "e"],
     ["e", "e", "e", "r", "h", "r", "e", "e", "e"],
     ["e", "e", "e", "r", "h", "r", "e", "e", "e"],
+    ["e", "e", "e", "s1", "h", "r", "e", "e", "e"],
+    ["e", "e", "e", "r", "h", "r", "e", "e", "e"],
+    ["e", "e", "e", "r", "h", "r", "e", "e", "e"],
+],
+[
+    ["e", "e", "e", "r", "h", "s2", "e", "e", "e"],
     ["e", "e", "e", "r", "h", "r", "e", "e", "e"],
     ["e", "e", "e", "r", "h", "r", "e", "e", "e"],
     ["e", "e", "e", "r", "h", "r", "e", "e", "e"],
-]
+    ["e", "e", "e", "r", "h", "r", "e", "e", "e"],
+    ["e", "e", "e", "r", "h", "r", "e", "e", "e"],
+    ["r", "r", "r", "s1", "h", "r", "r", "r", "r"],
+    ["h", "h", "h", "h", "h", "h", "h", "h", "h"],
+    ["r", "r", "r", "r", "r", "r", "r", "r", "r"],
+]]
 
-grid = [[Tile(x, y) if map[y][x] == "e" else Tile(x, y, "hall") if map[y][x] == "h" else Tile(x, y, "room", str(x) + str(y))
-        for x in range(len(map[y]))] for y in range(len(map))]
 
-def get_room_from_id(id, grid):
-    for row in grid:
-        for tile in row:
-            if tile.type == "room" and tile.id == id:
-                return tile
+DIST_PER_FLOOR = 2
 
-def get_tile(x, y, grid):
-    for row in grid:
-        for tile in row:
-            if tile.pos["x"] == x and tile.pos["y"] == y:
-                return tile
+grid = [
+    [
+        [Tile(x, y, z) if map[z][y][x] == "e"
+        else (Tile(x, y, z, "hall") if map[z][y][x] == "h"
+        else Tile(x, y, z, "room", str(z) + str(x) + str(y)) if map[z][y][x] == "r"
+        else Tile(x, y, z, "stair", str(z) + map[z][y][x][-1]))
+        for x in range(len(map[z][y]))]
+    for y in range(len(map[z]))]
+for z in range(len(map))]
+
+def get_tile_from_id(id, grid):
+    for level in grid:
+        for row in level:
+            for tile in row:
+                if (tile.type == "room" or tile.type == "stair") and tile.id == id:
+                    return tile
+
+def get_tile(x, y, z, grid):
+    for level in grid:
+        for row in level:
+            for tile in row:
+                if tile.pos["x"] == x and tile.pos["y"] == y and tile.level == z:
+                    return tile
     return None #if it can't find the tile
 
-def get_adjacent_tiles(x, y, grid):
+def get_adjacent_tiles(x, y, z, grid):
     tiles = [tile for tile in [
-        get_tile(x + 1, y, grid),
-        get_tile(x - 1, y, grid),
-        get_tile(x, y + 1, grid),
-        get_tile(x, y - 1, grid)
+        get_tile(x + 1, y, z, grid),
+        get_tile(x - 1, y, z, grid),
+        get_tile(x, y + 1, z, grid),
+        get_tile(x, y - 1, z, grid)
     ] if tile != None]
 
     return tiles
 
+def get_staircases_on_level(z, grid):
+    stairs = []
+    for level in grid:
+        for row in level:
+            for tile in row:
+                if tile.level == z and tile.type == "stair":
+                    stairs.append(tile)
 
-def get_dist(start_id, end_id, grid):
-    x = get_room_from_id(start_id, grid).pos["x"]
-    y = get_room_from_id(start_id, grid).pos["y"]
+    return stairs
+
+
+
+
+def get_dist_3d(start_id, end_id, grid):
+    x = get_tile_from_id(start_id, grid).pos["x"]
+    y = get_tile_from_id(start_id, grid).pos["y"]
+    z1 = get_tile_from_id(start_id, grid).level
+    z2 = get_tile_from_id(end_id, grid).level
+    total_dist = 0
+    #if they're on the same level we can just use the 2d dist function
+    if get_tile_from_id(start_id, grid).level == get_tile_from_id(end_id, grid).level:
+        return get_dist_2d(start_id, end_id, grid)
+    else: #but if they're not, lets go to staircases
+        #first we get the distances to all staircases on the level
+        #print [get_dist_2d(start_id, stair.id, grid) for stair in get_staircases_on_level(z1, grid)]
+        print "pl"
+        stair_dists = [(stair.id, get_dist_2d(start_id, stair.id, grid)) for stair in get_staircases_on_level(z1, grid)]
+        print "pls"
+        #then we get the id of the closest staircase
+        least_dist = 1000000
+        least_dist_id = ""
+        for sd in stair_dists:
+            if sd[1] < least_dist:
+                least_dist = sd[1]
+                least_dist_id = sd[0]
+        total_dist += least_dist
+        #find the difference in floors
+        total_dist += abs(z2 - z1) * DIST_PER_FLOOR
+        #add distance from staircase on other floor to destination
+        other_stair_id = str(z2) + least_dist_id[-1] #make id of other stair from level and staircase id
+        print other_stair_id
+        total_dist += get_dist_2d(other_stair_id, end_id, grid)
+        print "pls2"
+        return total_dist
+
+
+def get_dist_2d(start_id, end_id, grid):
+    for level in grid:
+        for row in level:
+            for tile in row:
+                tile.visited = False
+    x = get_tile_from_id(start_id, grid).pos["x"]
+    y = get_tile_from_id(start_id, grid).pos["y"]
+    z = get_tile_from_id(start_id, grid).level
     dist = 0
     branch_points = [] #these are in order of how far back the branch points are
 
     while True:
         dist += 1
-        currentTile = get_tile(x, y, grid)
+        time.sleep(0.1)
+        currentTile = get_tile(x, y, z, grid)
         currentTile.visited = True
         if len(branch_points) > 0: #i actually don't think this will be needed but maybe
             branch_points[-1]["visited_tiles"].append(currentTile)
         adj_hallways = []
         #scan the adjacent tiles
-        for tile in get_adjacent_tiles(x, y, grid):
+        for tile in get_adjacent_tiles(x, y, z, grid):
             #check if it got to the target room
-            if tile.type == "room" and tile.id == end_id:
+            if (tile.type == "room" or tile.type == "stair") and tile.id == end_id:
                     return dist
             elif tile.type == "hall" and not tile.visited:
-                adj_hallways.append(tile) #TODO: make sure that previous hallways aren't included
+                adj_hallways.append(tile)
         #decide what to do based on number of hallways
         if len(adj_hallways) == 1:
+            print "one possible way"
             #only one option, so let's go there
             x, y = adj_hallways[0].pos["x"], adj_hallways[0].pos["y"]
             continue #go to top of loop
         elif len(adj_hallways) > 1:
+            print "more than one"
             #make a new branch point record if we dont have one already
             #visited tiles are the tiles after that branch point but before the next
             #im using them so that if we go back to the branch point, we can unvisit the tiles
@@ -102,31 +176,41 @@ def get_dist(start_id, end_id, grid):
             for bp in branch_points:
                 if bp["coords"] == (x, y):
                     new_pos = bp["adj_hallways"].pop(0).pos
+                    print "removed a value"
+                    print bp["adj_hallways"]
                     x, y = new_pos["x"], new_pos["y"]
                     #if there are no more adj hallways, remove the branch point
                     #and go back to previous branch point
                     #it should never revisit a branch point thats been removed
                     #but if im wrong and it does this will 100% break the algorithm
                     if len(bp["adj_hallways"]) == 0:
+                        print "iewjfw0epo"
+                        branch_points.remove(bp)
                         for vt in bp["visited_tiles"]: #this should honestly never be needed
                             vt.visited = False
                         dist = bp["dist_to_start"]
-                        branch_points.remove(bp)
                         x, y = branch_points[-1]["coords"][0], branch_points[-1]["coords"][1]
                     continue
             continue
         elif len(adj_hallways) < 1:
+            print "no way"
             #nowhere left to go
             #just go back to the last recorded branch point (which should be the last one visited)
             dist = branch_points[-1]["dist_to_start"] #reset distance
             x, y = branch_points[-1]["coords"][0], branch_points[-1]["coords"][1]
+            print branch_points[-1]["adj_hallways"][0].pos
+            if len(branch_points[-1]["adj_hallways"]) == 1:
+                branch_points.remove(branch_points[-1]) #idk why but this works
             continue
 
 
 def disp_grid(grid):
-    for row in grid:
-        print [tile.id for tile in row]
+    for level in grid:
+        print "-" * 60
+        for row in level:
+            print [tile.id for tile in row]
+    print "-" * 60
 
 disp_grid(grid)
 
-print get_dist("00", "70", grid)
+print get_dist_3d("038", "158", grid)
