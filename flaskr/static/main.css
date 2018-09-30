@@ -76,3 +76,14 @@ input {
 #actually-die {
   display:none;
 }
+
+#remove-button {
+    border: 1px solid black;
+    padding: 2px;
+    margin: 0;
+    margin-left: 10px;
+    line-height: 10px;
+    border-radius: 5px;
+    background-color: Transparent;
+    font-size: 20px;
+}

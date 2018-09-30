@@ -51,26 +51,27 @@
       <div id="map">
         <canvas id="canvas" width="504" height"504"></canvas>
       </div>
-      <div id="room">
+      <div id="rooms">
         <h3>Subjects</h3>
           <input type="text" name="subject-name" id="room-id"><br>
-          <input type="text" name="subject-courses" id="room-courses"><br>
-          <button type="submit" onclick="submitRooms()"> Submit </button>
+          <button onclick="submitSubjects()"> Submit </button>
+          <ul id="subject-list">
+
+          </ul>
       </div>
       <div id="students">
         <h3>Students</h3>
           <input type="text" name="student-id" id="students-id"><br>
           <input type="text" name="student-courses" id="student-courses"><br>
-          <button type="button" onclick="submitStudents()"> Submit </button>
+          <button onclick="submitStudents()"> Submit </button>
       </div>
       <button id="algorithm" onclick="submitInfo()"><span id="go-button">Go</span></button>
       <!--Fix this later-->
-      <form id="import">
         <label for="importButton"<span id="importButtonText">Import CSV files</span></label><br>
         <div id="actually-die">
           <input id="importButton" type="file" name="importButton" accept="text/csv">
         </div>
-      </form>
+        <button onclick="submitCSV()"> Submit </button>
       </div>
     </div>
   </body>
