@@ -170,6 +170,8 @@ def optimize(metrics, schedules, max_itr, class_units, section_enroll, dist):
         itr += 1
     return startMean, startSTD, endMean, endSTD
 
+#def optimize_schedules():
+
 #Read JSON
 #List of students
 # students = load()
@@ -249,6 +251,7 @@ print("Starting Mean: " + str(start_mean))
 print("Ending Mean: " + str(end_mean))
 print("Starting STD: " + str(start_std))
 print("Ending STD: " + str(end_std))
+print(section_enroll)
 
 # print(schedules['Jacob'][0].course)
 # print(schedules['Jacob'][1].course)
