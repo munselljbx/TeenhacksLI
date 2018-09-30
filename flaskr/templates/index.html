@@ -50,12 +50,14 @@
   <body>
     <div class="grid">
       <div id="map">
-        <canvas id="canvas" width="1000" height="1000" onclick="canvasClick()"></canvas>
+        <canvas id="canvas" width="500" height="500"></canvas>
         <div id="toolbar">
             <button onclick="selectRoom()">Place Room</button>
             <button onclick="selectHallway()">Place Hallway</button>
             <button onclick="selectStair()">Place Staircase</button>
             <button onclick="selectEmpty()">Place Empty</button>
+            <input type="text" id="set-id">
+            <button onclick="autoAssign()">Auto Assign IDs</button>
         </div>
       </div>
       <div id="rooms">
